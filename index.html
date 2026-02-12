@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Minesweeper Pro - Material Active</title>
+    <title>Minesweeper Pro - Fixed UI</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..1000&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
@@ -31,13 +31,13 @@
             align-items: center;
             min-height: 100vh;
             user-select: none;
-            overflow-x: hidden;
+            overflow: hidden;
             -webkit-tap-highlight-color: transparent;
         }
 
         body.game-over-lost { background-color: #fff1f0; }
 
-        /* Nút bấm MD3 cải tiến */
+        /* Nút bấm MD3 cải tiến - Horizontal Stretch */
         .btn-md3 {
             height: 52px;
             padding: 0 24px;
@@ -48,20 +48,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             transition: all 0.25s var(--md-transition-squish);
             cursor: pointer;
-            border: 1px solid transparent;
-            transform-origin: center;
+            border: none;
+            outline: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
-        .btn-md3:active { transform: scaleX(1.15) scaleY(0.85); }
+        .btn-md3:active { transform: scaleX(1.2) scaleY(0.85); }
 
-        /* Trạng thái được chọn (Active) */
+        /* Trạng thái Active cho nút */
         .btn-md3.is-active {
             background-color: var(--md-sys-color-primary);
             color: var(--md-sys-color-on-primary);
-            box-shadow: 0 4px 12px rgba(0, 97, 164, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 97, 164, 0.25);
         }
 
         .btn-md3.is-active .material-symbols-outlined {
@@ -73,45 +74,49 @@
             color: white;
         }
 
-        /* Board Viewport */
+        /* Board Viewport tối ưu cho 6,75 inch */
         #board-viewport {
-            max-width: 92vw;
-            max-height: 55vh;
+            max-width: 94vw;
+            max-height: 50vh;
             overflow: auto;
             border-radius: 28px;
             background-color: var(--md-sys-color-surface-container-high);
             border: 1px solid #e1e2ec;
-            margin: 20px 0;
+            margin: 16px 0;
             scrollbar-width: thin;
             scrollbar-color: #cbd5e1 transparent;
         }
 
-        #board-viewport::-webkit-scrollbar { width: 6px; height: 6px; }
+        #board-viewport::-webkit-scrollbar { width: 4px; height: 4px; }
         #board-viewport::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
         .cell {
             width: 38px;
             height: 38px;
             background-color: #dbe2f9;
-            border-radius: 8px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
-            transition: all 0.15s var(--md-transition-squish);
+            font-weight: 900;
+            transition: all 0.1s ease;
             font-size: 1.1rem;
             cursor: pointer;
         }
 
         .cell.revealed {
             background-color: white;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.08);
             cursor: default;
         }
 
         .cell.bomb-red { background-color: #ffdad6 !important; color: #ba1a1a; }
         .cell.bomb-green { background-color: #d2f8d2 !important; color: #1e6c31; }
 
+        /* Icon mìn đặc thù Minecraft/MD3 */
+        .bomb-icon { font-variation-settings: 'FILL' 1; font-size: 22px; }
+
+        /* Loader */
         #loader-overlay {
             position: fixed;
             inset: 0;
@@ -124,20 +129,17 @@
         }
 
         #loading-img {
-            width: 60px;
+            width: 64px;
             filter: grayscale(1) brightness(0.5) sepia(1) hue-rotate(190deg) saturate(400%);
         }
 
+        /* Container điều khiển */
         .controls-wrapper {
             width: 100%;
             max-width: 360px;
-            padding: 0 16px;
-            height: 130px;
-            position: relative;
+            padding: 0 20px;
+            margin-bottom: 24px;
         }
-
-        .ui-fade { transition: opacity 0.3s ease, transform 0.3s ease; }
-        .ui-hidden { opacity: 0; transform: translateY(15px); pointer-events: none; position: absolute; width: 100%; }
 
         .n-1 { color: #005fb0; } .n-2 { color: #1e6c31; } .n-3 { color: #b3261e; }
         .n-4 { color: #6750a4; } .n-5 { color: #954b00; }
@@ -149,15 +151,15 @@
         <img id="loading-img" src="https://tuanphong3108.github.io/md3-loading/Loading_Indicator.gif" alt="Loading">
     </div>
 
-    <header class="mt-8 text-center px-4 w-full">
-        <h1 class="text-2xl font-black tracking-tight text-slate-800 mb-6 uppercase">Minesweeper Pro</h1>
+    <header class="mt-6 text-center px-4 w-full">
+        <h1 class="text-xl font-black tracking-tighter text-slate-800 mb-4 uppercase">Minesweeper Professional</h1>
         
-        <div class="flex justify-center gap-4">
-            <div class="bg-white px-5 py-2.5 rounded-2xl border border-slate-200 flex items-center gap-3 font-bold shadow-sm">
+        <div class="flex justify-center gap-3">
+            <div class="bg-white px-4 py-2 rounded-2xl border border-slate-200 flex items-center gap-2 font-black shadow-sm">
                 <span class="material-symbols-outlined text-blue-600" style="font-variation-settings: 'FILL' 1">flag</span>
                 <span id="bomb-counter">0</span>
             </div>
-            <div class="bg-white px-5 py-2.5 rounded-2xl border border-slate-200 flex items-center gap-3 font-bold shadow-sm">
+            <div class="bg-white px-4 py-2 rounded-2xl border border-slate-200 flex items-center gap-2 font-black shadow-sm">
                 <span class="material-symbols-outlined text-amber-600" style="font-variation-settings: 'FILL' 1">timer</span>
                 <span id="timer">000</span>
             </div>
@@ -169,19 +171,22 @@
     </div>
 
     <div class="controls-wrapper">
-        <div id="game-controls" class="ui-fade flex flex-col gap-3">
-            <button id="flag-mode-btn" onclick="toggleFlagMode()" class="btn-md3 w-full">
+        <div id="game-controls" class="flex flex-col gap-4">
+            <!-- Nút cắm cờ riêng biệt -->
+            <button id="flag-mode-btn" onclick="toggleFlagMode()" class="btn-md3 w-full shadow-md">
                 <span class="material-symbols-outlined">flag</span>
                 CHẾ ĐỘ CẮM CỜ
             </button>
-            <div class="flex gap-3">
-                <button id="diff-easy" onclick="initGame(9, 9, 10, 'easy')" class="btn-md3 flex-1 text-xs">DỄ</button>
-                <button id="diff-med" onclick="initGame(16, 16, 40, 'med')" class="btn-md3 flex-1 text-xs">VỪA</button>
-                <button id="diff-hard" onclick="initGame(16, 30, 99, 'hard')" class="btn-md3 flex-1 text-xs">KHÓ</button>
+            
+            <!-- Hàng nút độ khó -->
+            <div class="flex gap-2">
+                <button id="diff-easy" onclick="initGame(9, 9, 10, 'easy')" class="btn-md3 flex-1 text-xs px-2">DỄ</button>
+                <button id="diff-med" onclick="initGame(16, 16, 40, 'med')" class="btn-md3 flex-1 text-xs px-2">VỪA</button>
+                <button id="diff-hard" onclick="initGame(16, 30, 99, 'hard')" class="btn-md3 flex-1 text-xs px-2">KHÓ</button>
             </div>
         </div>
 
-        <div id="retry-controls" class="ui-fade ui-hidden flex flex-col items-center">
+        <div id="retry-controls" class="hidden flex flex-col items-center">
             <button onclick="retryGame()" class="btn-md3 danger w-full !h-[64px] !text-lg shadow-xl">
                 <span class="material-symbols-outlined">refresh</span>
                 CHƠI LẠI
@@ -189,16 +194,17 @@
         </div>
     </div>
 
-    <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 backdrop-blur-sm p-6">
-        <div class="bg-white p-8 rounded-[32px] max-w-sm w-full text-center shadow-2xl">
-            <h2 id="modal-title" class="text-2xl font-bold mb-2"></h2>
-            <p id="modal-msg" class="text-slate-600 mb-6"></p>
-            <button onclick="closeModal()" class="btn-md3 w-full !bg-slate-900 !text-white">ĐÓNG</button>
+    <!-- Modal kết thúc -->
+    <div id="modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 backdrop-blur-md p-6">
+        <div class="bg-white p-8 rounded-[40px] max-w-sm w-full text-center shadow-2xl border border-white/20">
+            <h2 id="modal-title" class="text-2xl font-black mb-2 text-slate-900"></h2>
+            <p id="modal-msg" class="text-slate-600 mb-8 font-medium"></p>
+            <button onclick="closeModal()" class="btn-md3 w-full !bg-slate-900 !text-white !h-[56px]">ĐÓNG</button>
         </div>
     </div>
 
     <script>
-        // --- Audio Manager ---
+        // --- Âm thanh Minecraft ---
         const sfx = {
             break: new Audio('https://tuanphong3108.github.io/minesweeper/Rooted_Dirt_break1.ogg.mp3'),
             flag: new Audio('https://tuanphong3108.github.io/minesweeper/Stone_dig4.ogg.mp3'),
@@ -214,21 +220,18 @@
 
         async function initGame(rows, cols, mines, diffId) {
             document.body.classList.remove('game-over-lost');
-            document.getElementById('game-controls').classList.remove('ui-hidden');
-            document.getElementById('retry-controls').classList.add('ui-hidden');
+            document.getElementById('game-controls').classList.remove('hidden');
+            document.getElementById('retry-controls').classList.add('hidden');
             
-            // Cập nhật trạng thái nút độ khó
             if(diffId) {
                 currentDiff = diffId;
-                ['diff-easy', 'diff-med', 'diff-hard'].forEach(id => {
-                    document.getElementById(id).classList.remove('is-active');
-                });
+                ['diff-easy', 'diff-med', 'diff-hard'].forEach(id => document.getElementById(id).classList.remove('is-active'));
                 document.getElementById('diff-' + diffId).classList.add('is-active');
             }
 
             const loader = document.getElementById('loader-overlay');
             loader.style.display = 'flex';
-            await new Promise(r => setTimeout(r, 450));
+            await new Promise(r => setTimeout(r, 400));
 
             R = rows; C = cols; M = mines;
             active = true; time = 0; revs = 0; placedFlags = 0; isFirst = true;
@@ -259,9 +262,7 @@
             loader.style.display = 'none';
         }
 
-        function retryGame() {
-            initGame(R, C, M, currentDiff);
-        }
+        function retryGame() { initGame(R, C, M, currentDiff); }
 
         function updateBombCounter() {
             document.getElementById('bomb-counter').innerText = M - placedFlags;
@@ -279,7 +280,7 @@
 
             if(isFirst) {
                 isFirst = false;
-                plantMinesAndCalculate(i, j);
+                plantMines(i, j);
                 timerInt = setInterval(() => {
                     time++;
                     document.getElementById('timer').innerText = time.toString().padStart(3, '0');
@@ -288,8 +289,7 @@
 
             if(grid[i][j].m) return endGame(false, i, j);
             
-            if (!grid[i][j].r) playSfx('break');
-            
+            playSfx('break');
             revealCell(i, j);
             if(revs === R * C - M) endGame(true);
         }
@@ -306,11 +306,11 @@
             el.innerHTML = grid[i][j].f ? '<span class="material-symbols-outlined text-blue-600 text-xl" style="font-variation-settings: \'FILL\' 1">flag</span>' : '';
         }
 
-        function plantMinesAndCalculate(startI, startJ) {
+        function plantMines(si, sj) {
             let placed = 0;
             while(placed < M) {
                 let ri = Math.floor(Math.random() * R), ci = Math.floor(Math.random() * C);
-                if(!grid[ri][ci].m && !(Math.abs(ri - startI) <= 1 && Math.abs(ci - startJ) <= 1)) {
+                if(!grid[ri][ci].m && !(Math.abs(ri - si) <= 1 && Math.abs(ci - sj) <= 1)) {
                     grid[ri][ci].m = true; placed++;
                 }
             }
@@ -341,10 +341,9 @@
         }
 
         function endGame(win, bi, bj) {
-            active = false; 
-            clearInterval(timerInt);
-            document.getElementById('game-controls').classList.add('ui-hidden');
-            document.getElementById('retry-controls').classList.remove('ui-hidden');
+            active = false; clearInterval(timerInt);
+            document.getElementById('game-controls').classList.add('hidden');
+            document.getElementById('retry-controls').classList.remove('hidden');
 
             if(!win) { playSfx('explosion'); document.body.classList.add('game-over-lost'); }
 
@@ -353,10 +352,10 @@
                 if(cell.m) {
                     if(cell.f) {
                         el.classList.add('bomb-green');
-                        el.innerHTML = '<span class="material-symbols-outlined text-green-700 text-xl" style="font-variation-settings: \'FILL\' 1">bomb</span>';
+                        el.innerHTML = '<span class="material-symbols-outlined bomb-icon text-green-700">bomb</span>';
                     } else {
                         el.classList.add('bomb-red');
-                        el.innerHTML = '<span class="material-symbols-outlined text-red-700 text-xl" style="font-variation-settings: \'FILL\' 1">bomb</span>';
+                        el.innerHTML = '<span class="material-symbols-outlined bomb-icon text-red-700">bomb</span>';
                     }
                 } else if(cell.f) {
                     el.innerHTML = '<span class="material-symbols-outlined text-slate-400">close</span>';
@@ -364,159 +363,16 @@
             }));
 
             setTimeout(() => {
-                const modal = document.getElementById('modal');
-                document.getElementById('modal-title').innerText = win ? "HOÀN THÀNH" : "TRÒ CHƠI KẾT THÚC";
-                document.getElementById('modal-msg').innerText = win ? `Nhiệm vụ gỡ mìn hoàn tất trong ${time} giây.` : "Bạn đã kích nổ mìn. Hãy thử lại để gỡ sạch bãi mìn.";
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            }, 800);
+                const m = document.getElementById('modal');
+                document.getElementById('modal-title').innerText = win ? "CHIẾN THẮNG!" : "BÙM! THUA RỒI";
+                document.getElementById('modal-msg').innerText = win ? `Phá đảo trong ${time} giây!` : "Bạn dẫm phải TNT rồi.";
+                m.classList.remove('hidden'); m.classList.add('flex');
+            }, 700);
         }
 
         function closeModal() { document.getElementById('modal').classList.add('hidden'); }
 
-        // Mặc định ban đầu là Dễ
         initGame(9, 9, 10, 'easy');
     </script>
 </body>
-</html>  }
-            loader.style.display = 'none';
-        }
-
-        function retryGame() {
-            initGame(R, C, M);
-        }
-
-        function updateBombCounter() {
-            document.getElementById('bomb-counter').innerText = M - placedFlags;
-        }
-
-        function toggleFlagMode() {
-            isFlagMode = !isFlagMode;
-            document.getElementById('flag-mode-btn').classList.toggle('is-active', isFlagMode);
-        }
-
-        function handleCellClick(i, j) {
-            if(!active || grid[i][j].r) return;
-            if(isFlagMode) return handleRightClick(i, j);
-            if(grid[i][j].f) return;
-
-            if(isFirst) {
-                isFirst = false;
-                plantMinesAndCalculate(i, j);
-                timerInt = setInterval(() => {
-                    time++;
-                    document.getElementById('timer').innerText = time.toString().padStart(3, '0');
-                }, 1000);
-            }
-
-            if(grid[i][j].m) return endGame(false, i, j);
-            
-            // Chỉ phát tiếng đào đất nếu ô này chưa được mở
-            if (!grid[i][j].r) {
-                playSfx('break');
-            }
-            
-            revealCell(i, j);
-            if(revs === R * C - M) endGame(true);
-        }
-
-        function handleRightClick(i, j) {
-            if(!active || grid[i][j].r) return;
-            
-            grid[i][j].f = !grid[i][j].f;
-            placedFlags += grid[i][j].f ? 1 : -1;
-            updateBombCounter();
-
-            // Phát âm thanh tương ứng: Đặt cờ (đào đá) / Gỡ cờ (đào đất)
-            if (grid[i][j].f) {
-                playSfx('flag');
-            } else {
-                playSfx('break');
-            }
-
-            const el = document.getElementById(`c-${i}-${j}`);
-            el.innerHTML = grid[i][j].f ? '<span class="material-symbols-outlined text-blue-600 text-xl" style="font-variation-settings: \'FILL\' 1">flag</span>' : '';
-        }
-
-        function plantMinesAndCalculate(startI, startJ) {
-            let placed = 0;
-            while(placed < M) {
-                let ri = Math.floor(Math.random() * R), ci = Math.floor(Math.random() * C);
-                if(!grid[ri][ci].m && !(Math.abs(ri - startI) <= 1 && Math.abs(ci - startJ) <= 1)) {
-                    grid[ri][ci].m = true; 
-                    placed++;
-                }
-            }
-            for(let i=0; i<R; i++) {
-                for(let j=0; j<C; j++) {
-                    if(grid[i][j].m) continue;
-                    let count = 0;
-                    for(let x=-1; x<=1; x++) for(let y=-1; y<=1; y++) {
-                        let ni=i+x, nj=j+y;
-                        if(ni>=0 && ni<R && nj>=0 && nj<C && grid[ni][nj].m) count++;
-                    }
-                    grid[i][j].n = count;
-                }
-            }
-        }
-
-        function revealCell(i, j) {
-            if(i<0 || i>=R || j<0 || j>=C || grid[i][j].r || grid[i][j].f) return;
-            
-            grid[i][j].r = true; 
-            revs++;
-            
-            const el = document.getElementById(`c-${i}-${j}`);
-            el.classList.add('revealed');
-            
-            if(grid[i][j].n > 0) {
-                el.innerText = grid[i][j].n;
-                el.classList.add(`n-${grid[i][j].n}`);
-            } else {
-                for(let x=-1; x<=1; x++) for(let y=-1; y<=1; y++) revealCell(i+x, j+y);
-            }
-        }
-
-        function endGame(win, bi, bj) {
-            active = false; 
-            clearInterval(timerInt);
-            document.getElementById('game-controls').classList.add('ui-hidden');
-            document.getElementById('retry-controls').classList.remove('ui-hidden');
-
-            if(!win) {
-                playSfx('explosion'); // Phát tiếng nổ khi thua
-                document.body.classList.add('game-over-lost');
-            }
-
-            grid.forEach((row, i) => row.forEach((cell, j) => {
-                const el = document.getElementById(`c-${i}-${j}`);
-                if(cell.m) {
-                    if(cell.f) {
-                        el.classList.add('bomb-green');
-                        el.innerHTML = '<span class="material-symbols-outlined text-green-700 text-xl" style="font-variation-settings: \'FILL\' 1">bomb</span>';
-                    } else {
-                        el.classList.add('bomb-red');
-                        el.innerHTML = '<span class="material-symbols-outlined text-red-700 text-xl" style="font-variation-settings: \'FILL\' 1">bomb</span>';
-                    }
-                } else if(cell.f) {
-                    el.innerHTML = '<span class="material-symbols-outlined text-slate-400">close</span>';
-                }
-            }));
-
-            setTimeout(() => {
-                const modal = document.getElementById('modal');
-                document.getElementById('modal-title').innerText = win ? "HOÀN THÀNH" : "TRÒ CHƠI KẾT THÚC";
-                document.getElementById('modal-msg').innerText = win ? `Nhiệm vụ gỡ mìn hoàn tất trong ${time} giây.` : "Bạn đã kích nổ mìn. Hãy thử lại để gỡ sạch bãi mìn.";
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            }, 800);
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
-        }
-
-        initGame(9, 9, 10);
-    </script>
-</body>
-      </html>
+</html>
