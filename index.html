@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Minesweeper Professional - Audio Edition</title>
+    <title>Minesweeper Pro - Material Active</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..1000&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
@@ -35,35 +35,37 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body.game-over-lost {
-            background-color: #fff1f0;
-        }
+        body.game-over-lost { background-color: #fff1f0; }
 
+        /* Nút bấm MD3 cải tiến */
         .btn-md3 {
             height: 52px;
             padding: 0 24px;
             border-radius: 26px;
-            background-color: var(--md-sys-color-primary-container);
+            background-color: var(--md-sys-color-surface-container-high);
             color: var(--md-sys-color-on-primary-container);
             font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.2s var(--md-transition-squish);
+            transition: all 0.25s var(--md-transition-squish);
             cursor: pointer;
-            border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid transparent;
             transform-origin: center;
         }
 
-        .btn-md3:active {
-            transform: scaleX(1.2) scaleY(0.85);
-        }
+        .btn-md3:active { transform: scaleX(1.15) scaleY(0.85); }
 
+        /* Trạng thái được chọn (Active) */
         .btn-md3.is-active {
             background-color: var(--md-sys-color-primary);
-            color: white;
+            color: var(--md-sys-color-on-primary);
+            box-shadow: 0 4px 12px rgba(0, 97, 164, 0.3);
+        }
+
+        .btn-md3.is-active .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
         }
 
         .btn-md3.danger {
@@ -71,6 +73,7 @@
             color: white;
         }
 
+        /* Board Viewport */
         #board-viewport {
             max-width: 92vw;
             max-height: 55vh;
@@ -83,14 +86,8 @@
             scrollbar-color: #cbd5e1 transparent;
         }
 
-        #board-viewport::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        #board-viewport::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
+        #board-viewport::-webkit-scrollbar { width: 6px; height: 6px; }
+        #board-viewport::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
         .cell {
             width: 38px;
@@ -104,11 +101,6 @@
             transition: all 0.15s var(--md-transition-squish);
             font-size: 1.1rem;
             cursor: pointer;
-            transform-origin: center;
-        }
-
-        .cell:active:not(.revealed) {
-            transform: scaleX(1.15) scaleY(0.85);
         }
 
         .cell.revealed {
@@ -140,21 +132,12 @@
             width: 100%;
             max-width: 360px;
             padding: 0 16px;
-            height: 120px;
+            height: 130px;
             position: relative;
         }
 
-        .ui-fade {
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-
-        .ui-hidden {
-            opacity: 0;
-            transform: translateY(15px);
-            pointer-events: none;
-            position: absolute;
-            width: 100%;
-        }
+        .ui-fade { transition: opacity 0.3s ease, transform 0.3s ease; }
+        .ui-hidden { opacity: 0; transform: translateY(15px); pointer-events: none; position: absolute; width: 100%; }
 
         .n-1 { color: #005fb0; } .n-2 { color: #1e6c31; } .n-3 { color: #b3261e; }
         .n-4 { color: #6750a4; } .n-5 { color: #954b00; }
@@ -192,14 +175,14 @@
                 CHẾ ĐỘ CẮM CỜ
             </button>
             <div class="flex gap-3">
-                <button onclick="initGame(9, 9, 10)" class="btn-md3 flex-1 text-xs">DỄ</button>
-                <button onclick="initGame(16, 16, 40)" class="btn-md3 flex-1 text-xs">VỪA</button>
-                <button onclick="initGame(16, 30, 99)" class="btn-md3 flex-1 text-xs">KHÓ</button>
+                <button id="diff-easy" onclick="initGame(9, 9, 10, 'easy')" class="btn-md3 flex-1 text-xs">DỄ</button>
+                <button id="diff-med" onclick="initGame(16, 16, 40, 'med')" class="btn-md3 flex-1 text-xs">VỪA</button>
+                <button id="diff-hard" onclick="initGame(16, 30, 99, 'hard')" class="btn-md3 flex-1 text-xs">KHÓ</button>
             </div>
         </div>
 
         <div id="retry-controls" class="ui-fade ui-hidden flex flex-col items-center">
-            <button onclick="retryGame()" class="btn-md3 danger w-full !h-[64px] !text-lg shadow-xl shadow-red-100">
+            <button onclick="retryGame()" class="btn-md3 danger w-full !h-[64px] !text-lg shadow-xl">
                 <span class="material-symbols-outlined">refresh</span>
                 CHƠI LẠI
             </button>
@@ -224,19 +207,25 @@
 
         function playSfx(key) {
             const sound = sfx[key];
-            if (sound) {
-                sound.currentTime = 0;
-                sound.play().catch(() => {}); // Chống lỗi trình duyệt chặn autoplay
-            }
+            if (sound) { sound.currentTime = 0; sound.play().catch(() => {}); }
         }
 
-        let R, C, M, grid, active, time, timerInt, revs, placedFlags, isFlagMode = false, isFirst = true;
+        let R, C, M, grid, active, time, timerInt, revs, placedFlags, isFlagMode = false, isFirst = true, currentDiff = 'easy';
 
-        async function initGame(rows, cols, mines) {
+        async function initGame(rows, cols, mines, diffId) {
             document.body.classList.remove('game-over-lost');
             document.getElementById('game-controls').classList.remove('ui-hidden');
             document.getElementById('retry-controls').classList.add('ui-hidden');
             
+            // Cập nhật trạng thái nút độ khó
+            if(diffId) {
+                currentDiff = diffId;
+                ['diff-easy', 'diff-med', 'diff-hard'].forEach(id => {
+                    document.getElementById(id).classList.remove('is-active');
+                });
+                document.getElementById('diff-' + diffId).classList.add('is-active');
+            }
+
             const loader = document.getElementById('loader-overlay');
             loader.style.display = 'flex';
             await new Promise(r => setTimeout(r, 450));
@@ -267,6 +256,129 @@
                     field.appendChild(el);
                 }
             }
+            loader.style.display = 'none';
+        }
+
+        function retryGame() {
+            initGame(R, C, M, currentDiff);
+        }
+
+        function updateBombCounter() {
+            document.getElementById('bomb-counter').innerText = M - placedFlags;
+        }
+
+        function toggleFlagMode() {
+            isFlagMode = !isFlagMode;
+            document.getElementById('flag-mode-btn').classList.toggle('is-active', isFlagMode);
+        }
+
+        function handleCellClick(i, j) {
+            if(!active || grid[i][j].r) return;
+            if(isFlagMode) return handleRightClick(i, j);
+            if(grid[i][j].f) return;
+
+            if(isFirst) {
+                isFirst = false;
+                plantMinesAndCalculate(i, j);
+                timerInt = setInterval(() => {
+                    time++;
+                    document.getElementById('timer').innerText = time.toString().padStart(3, '0');
+                }, 1000);
+            }
+
+            if(grid[i][j].m) return endGame(false, i, j);
+            
+            if (!grid[i][j].r) playSfx('break');
+            
+            revealCell(i, j);
+            if(revs === R * C - M) endGame(true);
+        }
+
+        function handleRightClick(i, j) {
+            if(!active || grid[i][j].r) return;
+            grid[i][j].f = !grid[i][j].f;
+            placedFlags += grid[i][j].f ? 1 : -1;
+            updateBombCounter();
+
+            if (grid[i][j].f) playSfx('flag'); else playSfx('break');
+
+            const el = document.getElementById(`c-${i}-${j}`);
+            el.innerHTML = grid[i][j].f ? '<span class="material-symbols-outlined text-blue-600 text-xl" style="font-variation-settings: \'FILL\' 1">flag</span>' : '';
+        }
+
+        function plantMinesAndCalculate(startI, startJ) {
+            let placed = 0;
+            while(placed < M) {
+                let ri = Math.floor(Math.random() * R), ci = Math.floor(Math.random() * C);
+                if(!grid[ri][ci].m && !(Math.abs(ri - startI) <= 1 && Math.abs(ci - startJ) <= 1)) {
+                    grid[ri][ci].m = true; placed++;
+                }
+            }
+            for(let i=0; i<R; i++) {
+                for(let j=0; j<C; j++) {
+                    if(grid[i][j].m) continue;
+                    let count = 0;
+                    for(let x=-1; x<=1; x++) for(let y=-1; y<=1; y++) {
+                        let ni=i+x, nj=j+y;
+                        if(ni>=0 && ni<R && nj>=0 && nj<C && grid[ni][nj].m) count++;
+                    }
+                    grid[i][j].n = count;
+                }
+            }
+        }
+
+        function revealCell(i, j) {
+            if(i<0 || i>=R || j<0 || j>=C || grid[i][j].r || grid[i][j].f) return;
+            grid[i][j].r = true; revs++;
+            const el = document.getElementById(`c-${i}-${j}`);
+            el.classList.add('revealed');
+            if(grid[i][j].n > 0) {
+                el.innerText = grid[i][j].n;
+                el.classList.add(`n-${grid[i][j].n}`);
+            } else {
+                for(let x=-1; x<=1; x++) for(let y=-1; y<=1; y++) revealCell(i+x, j+y);
+            }
+        }
+
+        function endGame(win, bi, bj) {
+            active = false; 
+            clearInterval(timerInt);
+            document.getElementById('game-controls').classList.add('ui-hidden');
+            document.getElementById('retry-controls').classList.remove('ui-hidden');
+
+            if(!win) { playSfx('explosion'); document.body.classList.add('game-over-lost'); }
+
+            grid.forEach((row, i) => row.forEach((cell, j) => {
+                const el = document.getElementById(`c-${i}-${j}`);
+                if(cell.m) {
+                    if(cell.f) {
+                        el.classList.add('bomb-green');
+                        el.innerHTML = '<span class="material-symbols-outlined text-green-700 text-xl" style="font-variation-settings: \'FILL\' 1">bomb</span>';
+                    } else {
+                        el.classList.add('bomb-red');
+                        el.innerHTML = '<span class="material-symbols-outlined text-red-700 text-xl" style="font-variation-settings: \'FILL\' 1">bomb</span>';
+                    }
+                } else if(cell.f) {
+                    el.innerHTML = '<span class="material-symbols-outlined text-slate-400">close</span>';
+                }
+            }));
+
+            setTimeout(() => {
+                const modal = document.getElementById('modal');
+                document.getElementById('modal-title').innerText = win ? "HOÀN THÀNH" : "TRÒ CHƠI KẾT THÚC";
+                document.getElementById('modal-msg').innerText = win ? `Nhiệm vụ gỡ mìn hoàn tất trong ${time} giây.` : "Bạn đã kích nổ mìn. Hãy thử lại để gỡ sạch bãi mìn.";
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }, 800);
+        }
+
+        function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+
+        // Mặc định ban đầu là Dễ
+        initGame(9, 9, 10, 'easy');
+    </script>
+</body>
+</html>  }
             loader.style.display = 'none';
         }
 
